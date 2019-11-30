@@ -1,13 +1,15 @@
 {
   "name": "mobx-mini",
-  "version": "1.0.0",
-  "description": "Mobx binding for mini program",
+  "version": "0.0.1",
+  "description": "Mobx 支付宝小程序的绑定",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
   "module": "build/module/index.js",
   "repository": "https://github.com/luv-sic/mobx-mini",
   "license": "MIT",
-  "keywords": [],
+  "keywords": [
+    "小程序", "状态管理", "mini program", "alipay", "支付宝","mobx","mobservable","observable","reactive","model","frp","functional-reactive-programming","state management","data flow"
+  ],
   "scripts": {
     "describe": "npm-scripts-info",
     "build": "run-s clean && run-p build:*",
