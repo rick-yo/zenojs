@@ -1,8 +1,4 @@
-import {
-  autorun,
-  IObservableObject,
-  toJS
-} from 'mobx';
+import { autorun, IObservableObject } from 'mobx';
 
 type Context =
   | tinyapp.IPageInstance<any>
@@ -23,21 +19,19 @@ function connect(context: Context, mapState: MapState) {
     throw new TypeError('mapState 必须是一个function');
   }
 
-  // let oldData: Dictionary = {};
   const update = (nextdata: Dictionary) => {
     // TODO 为了性能，这里需要深比较或者 diff
     context.setData(nextdata);
-    // oldData = nextdata;
   };
 
   const callback = () => {
-    // tslint:disable-next-line: no-let
-    const data: Dictionary = isFunction(mapState)
-      ? deriveDataFromFunction(mapState)
-      : deriveDataFromStore(mapState);
+    const data: Dictionary = isFunction(mapState) ? mapState() : mapState;
+    if (!data) {
+      return;
+    }
     update(data);
   };
-  const disposer = autorun(callback, { delay: 100 });
+  const disposer = autorun(callback);
 
   const onUnload = context.onUnload;
   const didUnmount = context.didUnmount;
@@ -46,7 +40,7 @@ function connect(context: Context, mapState: MapState) {
     // tslint:disable-next-line: no-unused-expression
     isFunction(onUnload) && onUnload.apply(context, arguments);
   };
-  
+
   context.didUnmount = () => {
     disposer();
     // tslint:disable-next-line: no-unused-expression
@@ -57,15 +51,6 @@ function connect(context: Context, mapState: MapState) {
 
 function isFunction(fn: any): boolean {
   return typeof fn === 'function';
-}
-
-function deriveDataFromStore(store: IObservableObject): Dictionary {
-  return toJS(store);
-}
-
-function deriveDataFromFunction(func: MapStateFunc): Dictionary {
-  const data = func();
-  return toJS(data);
 }
 
 export default connect;
