@@ -1,6 +1,6 @@
 // 获取全局 app 实例
 const app = getApp();
-import connect from '../../../build/main';
+import { connect } from '../../../build/main';
 import store from '../../store/todo';
 
 const mapState = () => ({

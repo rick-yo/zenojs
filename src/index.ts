@@ -1,1 +1,5 @@
-export * from './lib/connect';
+import connect from './lib/connect';
+
+export {
+  connect
+}
