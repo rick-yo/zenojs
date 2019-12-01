@@ -14,7 +14,7 @@ type MapState = MapStateFunc & IObservableObject;
  * @param {Object} context
  * @param {Function} mapState
  */
-function connect(context: Context, mapState: MapState) {
+function observer(context: Context, mapState: MapState) {
   if (!isFunction(mapState)) {
     throw new TypeError('mapState 必须是一个function');
   }
@@ -29,6 +29,12 @@ function connect(context: Context, mapState: MapState) {
     if (!data) {
       return;
     }
+    // const nextdata: Dictionary = {};
+    // for (const k in data) {
+    //   if (Object.prototype.hasOwnProperty.call(data, k)) {
+    //     nextdata[k] = toJS(data[k]);
+    //   }
+    // }
     update(data);
   };
   const disposer = autorun(callback);
@@ -53,4 +59,4 @@ function isFunction(fn: any): boolean {
   return typeof fn === 'function';
 }
 
-export default connect;
+export default observer;

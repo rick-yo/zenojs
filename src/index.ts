@@ -1,5 +1,5 @@
-import connect from './lib/connect';
+import observer from './lib/observer';
 
 export {
-  connect
+  observer
 }

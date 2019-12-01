@@ -1,6 +1,6 @@
 // 获取全局 app 实例
 const app = getApp();
-import { connect } from '../../../build/main';
+import { observer } from '../../../build/main';
 import store from '../../store/todo';
 
 const mapState = () => ({
@@ -13,7 +13,7 @@ Page({
   data: {},
   // 监听生命周期回调 onLoad
   onLoad() {
-    connect(this, mapState)
+    observer(this, mapState)
     // 获取用户信息并存储数据
     app.getUserInfo().then(
       user => {

@@ -13,11 +13,11 @@ Mobx 支付宝小程序的绑定
 
 ## API
 
-#### `connect(context, mapState)`
+#### `observer(context, mapState)`
 
 ```JavaScript
 import { observable } from 'mobx';
-import { connect } from 'mobx-mini';
+import { observer } from 'mobx-mini';
 
 const rootStore = observable({
   title: 'mobx-app'
@@ -45,7 +45,7 @@ Page({
     store.tick();
   },
   onLoad() {
-    connect(this, mapState);
+    observer(this, mapState);
   },
 });
 ```
