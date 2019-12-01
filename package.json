@@ -8,7 +8,20 @@
   "repository": "https://github.com/luv-sic/mobx-mini",
   "license": "MIT",
   "keywords": [
-    "小程序", "状态管理", "mini program", "alipay", "支付宝","mobx","mobservable","observable","reactive","model","frp","functional-reactive-programming","state management","data flow"
+    "小程序",
+    "状态管理",
+    "mini program",
+    "alipay",
+    "支付宝",
+    "mobx",
+    "mobservable",
+    "observable",
+    "reactive",
+    "model",
+    "frp",
+    "functional-reactive-programming",
+    "state management",
+    "data flow"
   ],
   "scripts": {
     "describe": "npm-scripts-info",
@@ -53,6 +66,7 @@
     "node": ">=8.9"
   },
   "dependencies": {
+    "fast-deep-equal": "^3.0.1",
     "mini-types": "^0.0.5",
     "mobx": "^5.15.0"
   },

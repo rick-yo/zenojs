@@ -1,4 +1,5 @@
-import { autorun, IObservableObject } from 'mobx';
+import equal from 'fast-deep-equal';
+import { autorun, IObservableObject, toJS } from 'mobx';
 
 type Context =
   | tinyapp.IPageInstance<any>
@@ -19,23 +20,34 @@ function observer(context: Context, mapState: MapState) {
     throw new TypeError('mapState 必须是一个function');
   }
 
+  let prevData: Dictionary = {};
+  let timer = 0;
+  // 为了性能，需要 diff + debounce
   const update = (nextdata: Dictionary) => {
-    // TODO 为了性能，这里需要深比较或者 diff
-    context.setData(nextdata);
+    Object.assign(prevData, nextdata);
+    // @ts-ignore
+    clearTimeout(timer);
+    // @ts-ignore
+    timer = setTimeout(() => {
+      const patchData = diff(context.data, nextdata);
+      context.setData(patchData);
+      prevData = {};
+    }, 40);
   };
 
   const callback = () => {
-    const data: Dictionary = isFunction(mapState) ? mapState() : mapState;
+    const data: Dictionary = mapState();
     if (!data) {
       return;
     }
-    // const nextdata: Dictionary = {};
-    // for (const k in data) {
-    //   if (Object.prototype.hasOwnProperty.call(data, k)) {
-    //     nextdata[k] = toJS(data[k]);
-    //   }
-    // }
-    update(data);
+    // FIXME 需要遍历 + toJS, why ?
+    const nextdata: Dictionary = {};
+    for (const k in data) {
+      if (Object.prototype.hasOwnProperty.call(data, k)) {
+        nextdata[k] = toJS(data[k]);
+      }
+    }
+    update(nextdata);
   };
   const disposer = autorun(callback);
 
@@ -57,6 +69,20 @@ function observer(context: Context, mapState: MapState) {
 
 function isFunction(fn: any): boolean {
   return typeof fn === 'function';
+}
+
+function diff(ps: Dictionary, ns: Dictionary) {
+  const value: Dictionary = {};
+  for (const k in ns) {
+    if (k in ps) {
+      if (!equal(ps[k], ns[k])) {
+        value[k] = ns[k];
+      }
+    } else {
+      value[k] = ns[k];
+    }
+  }
+  return value;
 }
 
 export default observer;

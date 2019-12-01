@@ -1620,6 +1620,11 @@ execa@^1.0.0:
     signal-exit "^3.0.0"
     strip-eof "^1.0.0"
 
+fast-deep-equal@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.npmjs.org/fast-deep-equal/-/fast-deep-equal-3.0.1.tgz#05a7fb9c3c34e594562b73c2b6e7ddaa92e5e79b"
+  integrity sha512-eV4KJB1HpEcckLU+u/i+FFZnvbeu34rQ514kL8m4uw7FyGWa7ltvz45vfDVFPZD+Z+h8WQL86+co5P3OWZrScw==
+
 fast-diff@^1.1.2:
   version "1.2.0"
   resolved "https://registry.npm.taobao.org/fast-diff/download/fast-diff-1.2.0.tgz#73ee11982d86caaf7959828d519cfe927fac5f03"
