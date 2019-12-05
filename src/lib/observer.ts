@@ -7,8 +7,7 @@ type Context =
 
 type Dictionary = Record<string, any>;
 type MapStateFunc = () => Dictionary;
-
-type MapState = MapStateFunc & IObservableObject;
+type MapState = MapStateFunc;
 
 /**
  * 映射所需的数据到data

@@ -10,10 +10,13 @@ Mobx 支付宝小程序的绑定
 
 1. 基于 Mobx，简单，灵活，性能强大
 2. Typescript 友好
+3. 无模板代码
 
 ## API
 
 #### `observer(context, mapState)`
+
+首先，定义 store 并连接到页面
 
 ```JavaScript
 import { observable } from 'mobx';
@@ -26,7 +29,7 @@ const rootStore = observable({
 const store = observable({
   count: 0,
   get isOdd() {
-    return this.seconds % 2 === 1;
+    return this.count % 2 === 1;
   },
   tick() {
     this.count += 1;
@@ -35,7 +38,7 @@ const store = observable({
 
 const mapState = () => ({
   count: store.count,
-  seconds: store.isOdd,
+  isOdd: store.isOdd,
   title: rootStore.title,
 });
 
@@ -49,3 +52,10 @@ Page({
   },
 });
 ```
+然后就能在 axml 中使用啦
+```html
+<view>{{count}}</view>
+```
+## Example
+
+见 `/example` 目录
