@@ -1,5 +1,5 @@
 import equal from 'fast-deep-equal';
-import { autorun, IObservableObject, toJS } from 'mobx';
+import { autorun, isBoxedObservable, isObservableArray, isObservableMap, isObservableObject, isObservableSet, toJS } from 'mobx';
 
 type Context =
   | tinyapp.IPageInstance<any>
@@ -43,7 +43,16 @@ function observer(context: Context, mapState: MapState) {
     const nextdata: Dictionary = {};
     for (const k in data) {
       if (Object.prototype.hasOwnProperty.call(data, k)) {
-        nextdata[k] = toJS(data[k]);
+        const item = data[k];
+        if (
+          isObservableObject(item) ||
+          isObservableArray(item) ||
+          isBoxedObservable(item) ||
+          isObservableMap(item) ||
+          isObservableSet(item)
+        ) {
+          nextdata[k] = toJS(item);
+        }
       }
     }
     update(nextdata);
