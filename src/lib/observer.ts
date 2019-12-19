@@ -1,5 +1,7 @@
 import equal from 'fast-deep-equal';
-import { autorun, isBoxedObservable, isObservableArray, isObservableMap, isObservableObject, isObservableSet, toJS } from 'mobx';
+import {
+  autorun,
+} from 'mobx';
 
 type Context =
   | tinyapp.IPageInstance<any>
@@ -19,19 +21,12 @@ function observer(context: Context, mapState: MapState) {
     throw new TypeError('mapState 必须是一个function');
   }
 
-  let prevData: Dictionary = {};
-  let timer = 0;
-  // 为了性能，需要 diff + debounce
-  const update = (nextdata: Dictionary) => {
-    Object.assign(prevData, nextdata);
-    // @ts-ignore
-    clearTimeout(timer);
-    // @ts-ignore
-    timer = setTimeout(() => {
-      const patchData = diff(context.data, nextdata);
-      context.setData(patchData);
-      prevData = {};
-    }, 40);
+  const update = (data: Dictionary) => {
+    // FIXME 深拷贝以避免在小程序双进程架构下, observable 响应式失效的问题
+    const nextdata: Dictionary = JSON.parse(JSON.stringify(data));
+    // diff 以提升性能
+    const patchData = diff(context.data, nextdata);
+    context.setData(patchData);
   };
 
   const callback = () => {
@@ -39,25 +34,14 @@ function observer(context: Context, mapState: MapState) {
     if (!data) {
       return;
     }
-    // FIXME 需要遍历 + toJS, why ?
-    const nextdata: Dictionary = {};
-    for (const k in data) {
-      if (Object.prototype.hasOwnProperty.call(data, k)) {
-        const item = data[k];
-        if (
-          isObservableObject(item) ||
-          isObservableArray(item) ||
-          isBoxedObservable(item) ||
-          isObservableMap(item) ||
-          isObservableSet(item)
-        ) {
-          nextdata[k] = toJS(item);
-        }
-      }
-    }
-    update(nextdata);
+
+    update(data);
   };
-  const disposer = autorun(callback);
+
+  const disposer = autorun(callback, {
+    delay: 30,
+    requiresObservable: true,
+  });
 
   const onUnload = context.onUnload;
   const didUnmount = context.didUnmount;
