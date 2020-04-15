@@ -39,7 +39,7 @@ function observer(context: Context, mapState: MapState) {
   };
 
   const disposer = autorun(callback, {
-    delay: 30,
+    // delay: 30,
     requiresObservable: true,
   });
 
