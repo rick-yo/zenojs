@@ -11,10 +11,13 @@ type Dictionary = Record<string, any>;
 type MapStateFunc = () => Dictionary;
 type MapState = MapStateFunc;
 
+const MOBX_STATE_CACHE = '__$mobxState';
+
 /**
  * 映射所需的数据到data
  * @param {Object} context
  * @param {Function} mapState
+ * @returns {Function} disposer 
  */
 function observer(context: Context, mapState: MapState) {
   if (!isFunction(mapState)) {
@@ -24,8 +27,11 @@ function observer(context: Context, mapState: MapState) {
   const update = (data: Dictionary) => {
     // FIXME 深拷贝以避免在小程序双进程架构下, observable 响应式失效的问题
     const nextdata: Dictionary = JSON.parse(JSON.stringify(data));
+    // 缓存 mapState() 防止 diff 组件上固有的 data
+    const oldData = context[MOBX_STATE_CACHE] || {};
     // diff 以提升性能
-    const patchData = diff(context.data, nextdata);
+    const patchData = diff(oldData, nextdata);
+    context[MOBX_STATE_CACHE] = patchData;
     context.setData(patchData);
   };
 
@@ -38,10 +44,7 @@ function observer(context: Context, mapState: MapState) {
     update(data);
   };
 
-  const disposer = autorun(callback, {
-    // delay: 30,
-    requiresObservable: true,
-  });
+  const disposer = autorun(callback);
 
   const onUnload = context.onUnload;
   const didUnmount = context.didUnmount;
