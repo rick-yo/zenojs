@@ -10,3 +10,4 @@ coverage
 
 package-lock.json
 example/.tea/
+yarn.lock

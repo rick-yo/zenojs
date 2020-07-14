@@ -1,4 +1,4 @@
-import { observable } from 'mobx';
+import { observable } from '../../build/main';
 
 let idx = 100;
 

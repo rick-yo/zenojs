@@ -19,8 +19,7 @@ Mobx 支付宝小程序的绑定
 首先，定义 store 并连接到页面
 
 ```JavaScript
-import { observable } from 'mobx';
-import { observer } from 'mobx-mini';
+import { observer, observable } from 'mobx-mini';
 
 const rootStore = observable({
   title: 'mobx-app'
