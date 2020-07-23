@@ -1,0 +1,64 @@
+{
+  "name": "mobx-mini",
+  "version": "0.4.1",
+  "description": "Mobx 支付宝小程序的绑定",
+  "repository": "https://github.com/luvsic3/mobx-mini",
+  "license": "MIT",
+  "keywords": [
+    "小程序",
+    "状态管理",
+    "mini program",
+    "alipay",
+    "支付宝",
+    "mobx",
+    "mobservable",
+    "observable",
+    "reactive",
+    "model",
+    "frp",
+    "functional-reactive-programming",
+    "state management",
+    "data flow"
+  ],
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "engines": {
+    "node": ">=10"
+  },
+  "scripts": {
+    "start": "tsdx watch",
+    "build": "tsdx build",
+    "test": "tsdx test",
+    "lint": "tsdx lint",
+    "prepare": "tsdx build"
+  },
+  "peerDependencies": {},
+  "husky": {
+    "hooks": {
+      "pre-commit": "tsdx lint"
+    }
+  },
+  "prettier": {
+    "printWidth": 80,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "author": "luvsic3",
+  "module": "dist/mobx-mini.esm.js",
+  "devDependencies": {
+    "husky": "^4.2.5",
+    "mini-types": "^0.1.3",
+    "tsdx": "^0.13.2",
+    "tslib": "^2.0.0",
+    "typescript": "^3.9.7"
+  },
+  "dependencies": {
+    "fast-deep-equal": "^3.1.3",
+    "mobx": "^5.15.4"
+  }
+}
