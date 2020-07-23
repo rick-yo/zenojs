@@ -1,7 +1,7 @@
 # mobx-mini
 
 [![npm](https://img.shields.io/npm/v/mobx-mini.svg)](https://www.npmjs.com/package/mobx-mini) 
-[![Build Status](https://travis-ci.org/luv-sic/mobx-mini.svg?branch=master)](https://travis-ci.org/luv-sic/mobx-mini)
+![CI](https://github.com/luvsic3/mobx-mini/workflows/CI/badge.svg)
 [![npm](https://img.shields.io/badge/TypeScript-%E2%9C%93-007ACC.svg)](https://www.typescriptlang.org/) 
 [![GitHub license](https://img.shields.io/github/license/luv-sic/mobx-mini.svg)](https://github.com/luv-sic/mobx-mini/blob/master/LICENSE)
 
