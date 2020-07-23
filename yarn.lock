@@ -2839,10 +2839,10 @@ mimic-response@^1.0.0, mimic-response@^1.0.1:
   resolved "https://registry.npm.taobao.org/mimic-response/download/mimic-response-1.0.1.tgz#4923538878eef42063cb8a3e3b0798781487ab1b"
   integrity sha1-SSNTiHju9CBjy4o+OweYeBSHqxs=
 
-mini-types@^0.0.5:
-  version "0.0.5"
-  resolved "https://registry.npm.taobao.org/mini-types/download/mini-types-0.0.5.tgz#4475e074d96fdcab48bc21233a8256830c6d921c"
-  integrity sha1-RHXgdNlv3KtIvCEjOoJWgwxtkhw=
+mini-types@^0.1.3:
+  version "0.1.3"
+  resolved "https://registry.npm.taobao.org/mini-types/download/mini-types-0.1.3.tgz#a4db1c18878d0c23fd87b4dad476de0b1d390a4f"
+  integrity sha1-pNscGIeNDCP9h7Ta1HbeCx05Ck8=
 
 minimatch@^3.0.0, minimatch@^3.0.4:
   version "3.0.4"
