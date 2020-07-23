@@ -18,7 +18,7 @@
       "*": ["src/*", "node_modules/*"]
     },
     "jsx": "react",
-    "types": ["mini-types", "@types/jest"],
+    "types": ["mini-types", "@types/jest", "node"],
     "esModuleInterop": true,
   }
 }

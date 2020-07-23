@@ -1,13 +1,12 @@
 import equal from 'fast-deep-equal';
 import { autorun } from 'mobx';
 
-type Context =
+export type Context =
   | tinyapp.IPageInstance<any>
   | tinyapp.IComponentInstance<any, any>;
 
 type Dictionary = Record<string, any>;
-type MapStateFunc = () => Dictionary;
-type MapState = MapStateFunc;
+export type MapState = () => Dictionary;
 
 const MOBX_STATE_CACHE = '__$mobxState';
 
@@ -18,9 +17,7 @@ const MOBX_STATE_CACHE = '__$mobxState';
  * @returns {Function} disposer
  */
 function observer(context: Context, mapState: MapState) {
-  if (!isFunction(mapState)) {
-    throw new TypeError('mapState 必须是一个function');
-  }
+  assert(isFunction(mapState), 'mapState 应是 function');
 
   const update = (data: Dictionary) => {
     // FIXME 深拷贝以避免在小程序双进程架构下, observable 响应式失效的问题
@@ -35,9 +32,7 @@ function observer(context: Context, mapState: MapState) {
 
   const callback = () => {
     const data: Dictionary = mapState();
-    if (!data) {
-      return;
-    }
+    assert(Boolean(data), 'mapState 应该返回对象');
 
     update(data);
   };
@@ -74,6 +69,10 @@ function diff(ps: Dictionary, ns: Dictionary) {
     }
   }
   return value;
+}
+
+function assert(value: boolean, message: string) {
+  if (!Boolean(value)) throw new Error(message);
 }
 
 export default observer;
