@@ -1,7 +1,5 @@
 import equal from 'fast-deep-equal';
-import {
-  autorun,
-} from 'mobx';
+import { autorun } from 'mobx';
 
 type Context =
   | tinyapp.IPageInstance<any>
@@ -17,7 +15,7 @@ const MOBX_STATE_CACHE = '__$mobxState';
  * 映射所需的数据到data
  * @param {Object} context
  * @param {Function} mapState
- * @returns {Function} disposer 
+ * @returns {Function} disposer
  */
 function observer(context: Context, mapState: MapState) {
   if (!isFunction(mapState)) {
@@ -48,16 +46,14 @@ function observer(context: Context, mapState: MapState) {
 
   const onUnload = context.onUnload;
   const didUnmount = context.didUnmount;
-  context.onUnload = () => {
+  context.onUnload = (...args: any[]) => {
     disposer();
-    // tslint:disable-next-line: no-unused-expression
-    isFunction(onUnload) && onUnload.apply(context, arguments);
+    isFunction(onUnload) && onUnload.apply(context, args);
   };
 
-  context.didUnmount = () => {
+  context.didUnmount = (...args: any[]) => {
     disposer();
-    // tslint:disable-next-line: no-unused-expression
-    isFunction(didUnmount) && didUnmount.apply(context, arguments);
+    isFunction(didUnmount) && didUnmount.apply(context, args);
   };
   return disposer;
 }
