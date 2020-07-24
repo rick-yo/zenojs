@@ -1,5 +1,5 @@
 import equal from 'fast-deep-equal';
-import { autorun } from 'mobx';
+import { autorun, trace } from 'mobx';
 
 export type Context =
   | tinyapp.IPageInstance<any>
@@ -19,22 +19,22 @@ const MOBX_STATE_CACHE = '__$mobxState';
 function observer(context: Context, mapState: MapState) {
   assert(isFunction(mapState), 'mapState 应是 function');
 
-  const update = (data: Dictionary) => {
-    // FIXME 深拷贝以避免在小程序双进程架构下, observable 响应式失效的问题
-    const nextdata: Dictionary = JSON.parse(JSON.stringify(data));
+  const update = (nextState: Dictionary) => {
     // 缓存 mapState() 防止 diff 组件上固有的 data
-    const oldData = context[MOBX_STATE_CACHE] || {};
+    const prevState = context[MOBX_STATE_CACHE] || {};
     // diff 以提升性能
-    const patchData = diff(oldData, nextdata);
-    context[MOBX_STATE_CACHE] = patchData;
-    context.setData(patchData);
+    const patchState = diff(prevState, nextState);
+    context.setData(patchState);
+    // delay 以避免阻塞 setData
+    context[MOBX_STATE_CACHE] = JSON.parse(JSON.stringify(patchState));
   };
 
   const callback = () => {
-    const data: Dictionary = mapState();
-    assert(Boolean(data), 'mapState 应该返回对象');
+    const nextState: Dictionary = mapState();
+    assert(Boolean(nextState), 'mapState 应该返回对象');
 
-    update(data);
+    update(nextState);
+    trace();
   };
 
   const disposer = autorun(callback);
