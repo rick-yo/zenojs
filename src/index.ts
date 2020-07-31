@@ -1,4 +1,4 @@
-import observer, { MapState, Context } from './lib/observer';
-import { observable } from 'mobx';
+import observer, { MapState, Context } from './observer';
+import { reactive, computed, watch, watchEffect } from '@vue/runtime-core';
 
-export { observer, observable, MapState, Context };
+export { observer, MapState, Context, reactive, computed, watch, watchEffect };
