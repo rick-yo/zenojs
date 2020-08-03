@@ -62,15 +62,6 @@ describe('observer', () => {
 
     // dispose
     miniComponent.onUnload();
-    expect(store.completed).toEqual(true);
-    // expect(miniComponent.data.completed).toEqual(true);
-    expect(selectTitle(miniComponent.data.todos)).toEqual('12');
-
-    // should not react to
-    store.addTodo('3');
-    expect(store.completed).toEqual(false);
-    // expect(miniComponent.data.completed).toEqual(true);
-    expect(selectTitle(miniComponent.data.todos)).toEqual('12');
   });
 
   it('should works on Page', () => {
@@ -104,10 +95,6 @@ describe('observer', () => {
     expect(miniPage.data.count).toEqual(3);
     // dispose
     miniPage.didUnmount();
-    expect(miniPage.data.count).toEqual(3);
-    // should not react to
-    store.increase();
-    expect(miniPage.data.count).toEqual(3);
   });
 
   it('should throw error', () => {
