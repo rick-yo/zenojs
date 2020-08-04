@@ -11,15 +11,14 @@ const mobxStateCacheKey = '__$stateCache__';
 
 /**
  * 映射所需的数据到data
- * @param {Object} context
- * @param {Function} mapState
+ * @param context 组件或页面的 this 指针
+ * @param mapState 映射 state 到组件或页面
  * @returns {Function} disposer
  */
 function observer<S>(context: Context, mapState: MapState<S>) {
   assert(isFunction(mapState), 'mapState 应是 function');
 
   const update = () => {
-    // console.time('update')
     const nextState = JSON.parse(JSON.stringify(mapState()));
     assert(isObject(nextState), 'mapState() 应返回一个对象');
 
@@ -29,7 +28,6 @@ function observer<S>(context: Context, mapState: MapState<S>) {
     const patchState = diff(prevState, nextState);
     context.setData(patchState);
     context[mobxStateCacheKey] = patchState;
-    // console.timeEnd('update')
   };
 
   const effectFn = effect(update);

@@ -1,4 +1,4 @@
-import { observer, reactive, computed } from '../src';
+import { observer, reactive, computed, Context } from '../src';
 
 describe('observer', () => {
   it('should works on Component', () => {
@@ -22,14 +22,7 @@ describe('observer', () => {
       });
     }
 
-    const miniComponent: any = {
-      data: {},
-      setData(nextData: any) {
-        this.data = {
-          ...this.data,
-          ...nextData,
-        };
-      },
+    const miniComponent = createMiniAppComponent({
       onInit() {
         observer(this, () => ({
           todos,
@@ -37,26 +30,31 @@ describe('observer', () => {
         }));
       },
       onUnload() {},
-    };
+    });
     // setup
     miniComponent.onInit();
 
     // init
     expect(miniComponent.data.todos).toEqual(todos);
+    expect(done.value).toEqual(true);
+    expect(miniComponent.data.done.value).toEqual(done.value);
 
     // update
-    addTodo('2');
+    addTodo('todo item 2');
     expect(miniComponent.data.todos).toEqual(todos);
     expect(done.value).toEqual(false);
-    expect(miniComponent.data.done.value).toEqual(false);
+    expect(miniComponent.data.done.value).toEqual(done.value);
 
-    toggleCompleted(1, true);
     toggleCompleted(2, true);
+    expect(miniComponent.data.todos).toEqual(todos);
     expect(done.value).toEqual(true);
     expect(miniComponent.data.done.value).toEqual(done.value);
 
     // dispose
     miniComponent.onUnload();
+    addTodo('todo item 3');
+    expect(done.value).toEqual(false);
+    expect(miniComponent.data.done.value).toEqual(true);
   });
 
   it('should works on Page', () => {
@@ -68,24 +66,16 @@ describe('observer', () => {
       counter.value++;
     }
 
-    const miniPage: any = {
-      data: {
-        value: 0,
-      },
-      setData(nextData: any) {
-        this.data = {
-          ...this.data,
-          ...nextData,
-        };
-      },
+    const miniPage = createMiniAppComponent({
       onLoad() {
         observer(this, () => counter);
       },
       didUnmount() {},
-    };
+    });
     // setup
     miniPage.onLoad();
     // init
+    expect(miniPage.data.value).toEqual(1);
     expect(miniPage.data.value).toEqual(counter.value);
     // update
     increase();
@@ -94,9 +84,27 @@ describe('observer', () => {
     expect(miniPage.data.value).toEqual(counter.value);
     // dispose
     miniPage.didUnmount();
+    increase();
+    expect(counter.value).toEqual(4);
+    expect(miniPage.data.value).toEqual(3);
   });
 
   it('should throw error', () => {
-    expect(() => observer({} as any, 0 as any)).toThrowError();
+    expect(() => observer({} as Context, 0 as any)).toThrowError();
   });
 });
+
+function createMiniAppComponent<T>(
+  options: tinyapp.PageOptions & tinyapp.ComponentOptions & T
+) {
+  return {
+    data: {},
+    setData(nextData: any) {
+      this.data = {
+        ...this.data,
+        ...nextData,
+      };
+    },
+    ...options,
+  };
+}
