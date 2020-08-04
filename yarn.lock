@@ -1209,19 +1209,11 @@
     semver "^7.3.2"
     tsutils "^3.17.1"
 
-"@vue/reactivity@3.0.0-rc.5":
+"@vue/reactivity@^3.0.0-rc.5":
   version "3.0.0-rc.5"
   resolved "https://registry.npm.alibaba-inc.com/@vue/reactivity/download/@vue/reactivity-3.0.0-rc.5.tgz#45cff8d839d7ad130b1e499239090050fdecff13"
   integrity sha1-Rc/42DnXrRMLHkmSOQkAUP3s/xM=
   dependencies:
-    "@vue/shared" "3.0.0-rc.5"
-
-"@vue/runtime-core@^3.0.0-rc.5":
-  version "3.0.0-rc.5"
-  resolved "https://registry.npm.alibaba-inc.com/@vue/runtime-core/download/@vue/runtime-core-3.0.0-rc.5.tgz#dd59af3a5fc089d1cdc05a657320c0dc17e5c362"
-  integrity sha1-3VmvOl/AidHNwFplcyDA3Bflw2I=
-  dependencies:
-    "@vue/reactivity" "3.0.0-rc.5"
     "@vue/shared" "3.0.0-rc.5"
 
 "@vue/shared@3.0.0-rc.5":

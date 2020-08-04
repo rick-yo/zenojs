@@ -1,12 +1,13 @@
-// @ts-nocheck
 import equal from 'fast-deep-equal';
-import { watch } from '@vue/runtime-core';
+import { effect, stop } from '@vue/reactivity';
 
 export type Context =
   | tinyapp.IPageInstance<any>
   | tinyapp.IComponentInstance<any, any>;
 
 export type MapState<S> = () => S;
+
+const mobxStateCacheKey = '__$stateCache__';
 
 /**
  * 映射所需的数据到data
@@ -17,37 +18,34 @@ export type MapState<S> = () => S;
 function observer<S>(context: Context, mapState: MapState<S>) {
   assert(isFunction(mapState), 'mapState 应是 function');
 
-  const update = (nextState: S, prevState: S) => {
-    // 缓存 mapState() 防止 diff 组件上固有的 data
-    // diff 以提升性能
-    // const patchState = diff(prevState, nextState);
-    context.setData(nextState);
-  };
-
-  const callback = (nextState: S, prevState: S) => {
+  const update = () => {
+    // console.time('update')
+    const nextState = JSON.parse(JSON.stringify(mapState()));
     assert(isObject(nextState), 'mapState() 应返回一个对象');
 
-    update(nextState, prevState);
+    // 缓存 mapState() 防止 diff 组件上固有的 data
+    const prevState = context[mobxStateCacheKey] || {};
+    // diff 以提升性能
+    const patchState = diff(prevState, nextState);
+    context.setData(patchState);
+    context[mobxStateCacheKey] = patchState;
+    // console.timeEnd('update')
   };
 
-  const disposer = watch(mapState, callback, {
-    deep: true,
-  });
-
-  callback(mapState(), {} as S);
+  const effectFn = effect(update);
 
   const onUnload = context.onUnload;
   const didUnmount = context.didUnmount;
   context.onUnload = (...args: any[]) => {
-    disposer();
+    stop(effectFn);
     isFunction(onUnload) && onUnload.apply(context, args);
   };
 
   context.didUnmount = (...args: any[]) => {
-    disposer();
+    stop(effectFn);
     isFunction(didUnmount) && didUnmount.apply(context, args);
   };
-  return disposer;
+  return effectFn;
 }
 
 function isFunction(fn: any): boolean {

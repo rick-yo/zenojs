@@ -1,9 +1,8 @@
 import { observer, reactive, computed } from '../src';
 
-let idx = 1;
-
 describe('observer', () => {
   it('should works on Component', () => {
+    let idx = 1;
     const todos = reactive([
       { id: 1, text: 'Learning Javascript', completed: true },
     ]);
@@ -23,11 +22,8 @@ describe('observer', () => {
       });
     }
 
-    const miniComponent = {
-      data: {
-        todos: [],
-        completed: false,
-      },
+    const miniComponent: any = {
+      data: {},
       setData(nextData: any) {
         this.data = {
           ...this.data,
@@ -35,12 +31,10 @@ describe('observer', () => {
         };
       },
       onInit() {
-        observer(this, () => {
-          return {
-            todos,
-            done,
-          };
-        });
+        observer(this, () => ({
+          todos,
+          done,
+        }));
       },
       onUnload() {},
     };
@@ -49,7 +43,6 @@ describe('observer', () => {
 
     // init
     expect(miniComponent.data.todos).toEqual(todos);
-    // expect(miniComponent.data.completed).toEqual(false);
 
     // update
     addTodo('2');
@@ -60,19 +53,10 @@ describe('observer', () => {
     toggleCompleted(1, true);
     toggleCompleted(2, true);
     expect(done.value).toEqual(true);
-    // expect(miniComponent.data.completed).toEqual(true);
+    expect(miniComponent.data.done.value).toEqual(done.value);
 
     // dispose
     miniComponent.onUnload();
-    expect(done.value).toEqual(true);
-    // expect(miniComponent.data.completed).toEqual(true);
-    // expect(miniComponent.data.todos)).toEqual('12');
-
-    // should not react to
-    addTodo('3');
-    expect(done.value).toEqual(false);
-    // expect(miniComponent.data.completed).toEqual(true);
-    // expect(miniComponent.data.todos)).toEqual('12');
   });
 
   it('should works on Page', () => {
@@ -81,7 +65,7 @@ describe('observer', () => {
     });
 
     function increase() {
-      counter.value += 1;
+      counter.value++;
     }
 
     const miniPage: any = {
@@ -102,7 +86,7 @@ describe('observer', () => {
     // setup
     miniPage.onLoad();
     // init
-    expect(miniPage.data.value).toEqual(1);
+    expect(miniPage.data.value).toEqual(counter.value);
     // update
     increase();
     expect(miniPage.data.value).toEqual(counter.value);
@@ -110,10 +94,6 @@ describe('observer', () => {
     expect(miniPage.data.value).toEqual(counter.value);
     // dispose
     miniPage.didUnmount();
-    expect(miniPage.data.value).toEqual(3);
-    // should not react to
-    increase();
-    expect(miniPage.data.value).toEqual(3);
   });
 
   it('should throw error', () => {
