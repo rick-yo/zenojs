@@ -1,4 +1,5 @@
 import nextTick from './nextTick';
+import { isFunction } from './utils';
 
 let queue: Function[] = [];
 
@@ -10,8 +11,6 @@ export function enqueueUpdate(callback: Function) {
 function doUpdate() {
   const list = queue;
   queue = [];
-  let update;
-  while ((update = list.pop())) {
-    update();
-  }
+  const lastUpdate = list.pop();
+  isFunction(lastUpdate) && lastUpdate();
 }

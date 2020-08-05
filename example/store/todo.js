@@ -1,8 +1,8 @@
-import { reactive, computed } from '@vue/reactivity';
+import { reactive, computed } from '../../dist';
 
-let idx = 1;
+let idx = 3;
 
-const perfData = new Array(3).fill(1).map((item, index) => {
+const items = new Array(idx).fill(1).map((item, index) => {
   return {
     id: index,
     text: `Todo item ${index}`,
@@ -10,10 +10,13 @@ const perfData = new Array(3).fill(1).map((item, index) => {
   }
 })
 
-const todos = reactive(perfData);
+// 定义状态
+const todos = reactive(items);
 
+// 计算属性
 const done = computed(() => todos.every(todo => todo.completed));
 
+// 更新状态
 function toggleCompleted(id, completed) {
   const todo = todos.find(item => item.id === id);
   todo.completed = completed;

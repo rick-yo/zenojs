@@ -1,7 +1,7 @@
-import { observer, reactive, computed, Context } from '../src';
+import { observer, reactive, computed, Context, nextTick } from '../src';
 
 describe('observer', () => {
-  it('should works on Component', () => {
+  it('should works on Component', async () => {
     let idx = 1;
     const todos = reactive([
       { id: 1, text: 'Learning Javascript', completed: true },
@@ -41,11 +41,13 @@ describe('observer', () => {
 
     // update
     addTodo('todo item 2');
+    await waitNextTick();
     expect(miniComponent.data.todos).toEqual(todos);
     expect(done.value).toEqual(false);
     expect(miniComponent.data.done.value).toEqual(done.value);
 
     toggleCompleted(2, true);
+    await waitNextTick();
     expect(miniComponent.data.todos).toEqual(todos);
     expect(done.value).toEqual(true);
     expect(miniComponent.data.done.value).toEqual(done.value);
@@ -57,7 +59,7 @@ describe('observer', () => {
     expect(miniComponent.data.done.value).toEqual(true);
   });
 
-  it('should works on Page', () => {
+  it('should works on Page', async () => {
     const counter = reactive({
       value: 1,
     });
@@ -79,8 +81,10 @@ describe('observer', () => {
     expect(miniPage.data.value).toEqual(counter.value);
     // update
     increase();
+    await waitNextTick();
     expect(miniPage.data.value).toEqual(counter.value);
     increase();
+    await waitNextTick();
     expect(miniPage.data.value).toEqual(counter.value);
     // dispose
     miniPage.didUnmount();
@@ -107,4 +111,8 @@ function createMiniAppComponent<T>(
     },
     ...options,
   };
+}
+
+function waitNextTick() {
+  return new Promise(resolve => nextTick(resolve));
 }

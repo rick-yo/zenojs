@@ -1,5 +1,6 @@
-import equal from 'fast-deep-equal';
 import { effect, stop } from '@vue/reactivity';
+import { enqueueUpdate } from './enqueueUpdate';
+import { assert, isFunction, isObject, diff } from './utils';
 
 export type Context =
   | tinyapp.IPageInstance<any>
@@ -30,46 +31,24 @@ function observer<S>(context: Context, mapState: MapState<S>) {
     context[mobxStateCacheKey] = patchState;
   };
 
-  const effectFn = effect(update);
+  const job = effect(update, {
+    scheduler(job) {
+      enqueueUpdate(job);
+    },
+  });
 
   const onUnload = context.onUnload;
   const didUnmount = context.didUnmount;
   context.onUnload = (...args: any[]) => {
-    stop(effectFn);
+    stop(job);
     isFunction(onUnload) && onUnload.apply(context, args);
   };
 
   context.didUnmount = (...args: any[]) => {
-    stop(effectFn);
+    stop(job);
     isFunction(didUnmount) && didUnmount.apply(context, args);
   };
-  return effectFn;
-}
-
-function isFunction(fn: any): boolean {
-  return typeof fn === 'function';
-}
-
-function isObject(val: any): boolean {
-  return typeof val === 'object' && val !== null;
-}
-
-function diff<S>(ps: S, ns: S) {
-  const value: Partial<S> = {};
-  for (const k in ns) {
-    if (k in ps) {
-      if (!equal(ps[k], ns[k])) {
-        value[k] = ns[k];
-      }
-    } else {
-      value[k] = ns[k];
-    }
-  }
-  return value;
-}
-
-function assert(value: boolean, message: string) {
-  if (!Boolean(value)) throw new Error(message);
+  return job;
 }
 
 export default observer;
