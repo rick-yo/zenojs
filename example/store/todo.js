@@ -4,7 +4,7 @@ let idx = 1;
 
 const perfData = new Array(3).fill(1).map((item, index) => {
   return {
-    id: index.toString(),
+    id: index,
     text: `Todo item ${index}`,
     completed: false
   }
