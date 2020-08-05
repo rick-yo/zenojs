@@ -27,8 +27,11 @@ function observer<S>(context: Context, mapState: MapState<S>) {
     const prevState = context[mobxStateCacheKey] || {};
     // diff 以提升性能
     const patchState = diff(prevState, nextState);
-    context.setData(patchState);
-    context[mobxStateCacheKey] = patchState;
+    const shouldUpdate = Object.keys(patchState).length;
+    if (shouldUpdate) {
+      context.setData(patchState);
+      context[mobxStateCacheKey] = nextState;
+    }
   };
 
   const job = effect(update, {

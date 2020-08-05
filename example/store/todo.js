@@ -1,14 +1,14 @@
 import { reactive, computed } from '../../dist';
 
-let idx = 3;
+let idx = 30;
 
 const items = new Array(idx).fill(1).map((item, index) => {
   return {
     id: index,
     text: `Todo item ${index}`,
-    completed: false
-  }
-})
+    completed: false,
+  };
+});
 
 // 定义状态
 const todos = reactive(items);
@@ -23,7 +23,7 @@ function toggleCompleted(id, completed) {
 }
 
 function addTodo(text) {
-  todos.push({
+  todos.unshift({
     text,
     id: ++idx,
     completed: false,
