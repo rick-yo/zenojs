@@ -11,6 +11,8 @@ export function enqueueUpdate(callback: Function) {
 function doUpdate() {
   const list = queue;
   queue = [];
-  const lastUpdate = list.pop();
-  isFunction(lastUpdate) && lastUpdate();
+  let update;
+  while ((update = list.pop())) {
+    isFunction(update) && update();
+  }
 }

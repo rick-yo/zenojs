@@ -35,6 +35,9 @@ function observer<S>(context: Context, mapState: MapState<S>) {
     scheduler(job) {
       enqueueUpdate(job);
     },
+    // onTrigger(e) {
+    //   console.log('onTrigger :>> ', e);
+    // },
   });
 
   const onUnload = context.onUnload;
