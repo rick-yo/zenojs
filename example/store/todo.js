@@ -1,27 +1,30 @@
-import { observable } from '../../dist';
+import { reactive, computed } from '@vue/reactivity';
 
-let idx = 100;
+let idx = 1;
 
-const store = observable({
-  todos: [
-    { id: '1', text: 'Learning Javascript', completed: true },
-    { id: '2', text: 'Learning ES2016', completed: false },
-    { id: '3', text: 'Learning 支付宝小程序', completed: true }
-  ],
-  get done() {
-    return this.todos.every(todo => todo.completed);
-  },
-  toggleCompleted(id, completed) {
-    const todo = this.todos.find(item => item.id === id)
-    todo.completed = completed;
-  },
-  addTodo(text) {
-    this.todos.push({
-      text,
-      id: ++idx,
-      completed: false
-    })
-  },
-});
+const perfData = new Array(3).fill(1).map((item, index) => {
+  return {
+    id: index,
+    text: `Todo item ${index}`,
+    completed: false
+  }
+})
 
-export default store;
+const todos = reactive(perfData);
+
+const done = computed(() => todos.every(todo => todo.completed));
+
+function toggleCompleted(id, completed) {
+  const todo = todos.find(item => item.id === id);
+  todo.completed = completed;
+}
+
+function addTodo(text) {
+  todos.push({
+    text,
+    id: ++idx,
+    completed: false,
+  });
+}
+
+export { todos, done, toggleCompleted, addTodo };

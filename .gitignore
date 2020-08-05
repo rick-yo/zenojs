@@ -4,3 +4,4 @@ node_modules
 dist
 .tea
 coverage
+yarn.lock

@@ -1,11 +1,11 @@
 // 获取全局 app 实例
 const app = getApp();
 import { observer } from '../../../dist';
-import store from '../../store/todo';
+import { todos, done, toggleCompleted } from '../../store/todo';
 
 const mapState = () => ({
-  todos: store.todos,
-  done: store.done
+  todos,
+  done
 })
 
 Page({
@@ -30,7 +30,7 @@ Page({
   onTodoChanged(e) {
     // 修改全局数据
     const completed = e.detail.value;
-    store.toggleCompleted(e.target.dataset.id, completed)
+    toggleCompleted(e.target.dataset.id, completed)
   },
 
   addTodo() {

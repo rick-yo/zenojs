@@ -1,4 +1,4 @@
-import store from "../../store/todo";
+import { addTodo } from "../../store/todo";
 
 Page({
   data: {
@@ -12,7 +12,7 @@ Page({
   },
 
   add() {
-    store.addTodo(this.data.inputValue)
+    addTodo(this.data.inputValue)
     my.navigateBack();
   },
 });

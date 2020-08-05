@@ -1,112 +1,110 @@
-import { observer, observable } from '../src';
+import { observer, reactive, computed, Context } from '../src';
 
 describe('observer', () => {
   it('should works on Component', () => {
-    const store = observable({
-      todos: [
-        {
-          title: '1',
-          done: false,
-        },
-      ],
-      get completed() {
-        return this.todos.every((todo: Todo) => todo.done);
-      },
-      addTodo(title: string) {
-        this.todos.push({
-          title,
-          done: false,
-        });
-      },
-      doneTodo(title: string) {
-        const todo = this.todos.find(todo => todo.title === title);
-        if (todo) {
-          todo.done = true;
-        }
-      },
-    });
+    let idx = 1;
+    const todos = reactive([
+      { id: 1, text: 'Learning Javascript', completed: true },
+    ]);
 
-    const miniComponent: any = {
-      data: {
-        todos: [],
+    const done = computed(() => todos.every(todo => todo.completed));
+
+    function toggleCompleted(id: number, completed: boolean) {
+      const todo = todos.find(item => item.id === id);
+      todo && (todo.completed = completed);
+    }
+
+    function addTodo(text: string) {
+      todos.push({
+        id: ++idx,
+        text,
         completed: false,
-      },
-      setData(nextData: typeof miniComponent.data) {
-        this.data = {
-          ...this.data,
-          ...nextData,
-        };
-      },
+      });
+    }
+
+    const miniComponent = createMiniAppComponent({
       onInit() {
-        observer(this, () => store);
+        observer(this, () => ({
+          todos,
+          done,
+        }));
       },
       onUnload() {},
-    };
+    });
     // setup
     miniComponent.onInit();
 
     // init
-    expect(selectTitle(miniComponent.data.todos)).toEqual('1');
-    // expect(miniComponent.data.completed).toEqual(false);
+    expect(miniComponent.data.todos).toEqual(todos);
+    expect(done.value).toEqual(true);
+    expect(miniComponent.data.done.value).toEqual(done.value);
 
     // update
-    store.addTodo('2');
-    expect(selectTitle(miniComponent.data.todos)).toEqual('12');
-    expect(store.completed).toEqual(false);
-    // expect(miniComponent.data.completed).toEqual(false);
+    addTodo('todo item 2');
+    expect(miniComponent.data.todos).toEqual(todos);
+    expect(done.value).toEqual(false);
+    expect(miniComponent.data.done.value).toEqual(done.value);
 
-    store.doneTodo('1');
-    store.doneTodo('2');
-    expect(store.completed).toEqual(true);
-    // expect(miniComponent.data.completed).toEqual(true);
+    toggleCompleted(2, true);
+    expect(miniComponent.data.todos).toEqual(todos);
+    expect(done.value).toEqual(true);
+    expect(miniComponent.data.done.value).toEqual(done.value);
 
     // dispose
     miniComponent.onUnload();
+    addTodo('todo item 3');
+    expect(done.value).toEqual(false);
+    expect(miniComponent.data.done.value).toEqual(true);
   });
 
   it('should works on Page', () => {
-    const store = observable({
-      count: 1,
-      increase() {
-        this.count++;
-      },
+    const counter = reactive({
+      value: 1,
     });
 
-    const miniPage: any = {
-      data: {
-        count: 0,
-      },
-      setData(nextData: typeof miniPage.data) {
-        this.data = Object.assign(this.data, nextData);
-      },
+    function increase() {
+      counter.value++;
+    }
+
+    const miniPage = createMiniAppComponent({
       onLoad() {
-        observer(this as any, () => store);
+        observer(this, () => counter);
       },
       didUnmount() {},
-    };
+    });
     // setup
     miniPage.onLoad();
     // init
-    expect(miniPage.data.count).toEqual(1);
+    expect(miniPage.data.value).toEqual(1);
+    expect(miniPage.data.value).toEqual(counter.value);
     // update
-    store.increase();
-    expect(miniPage.data.count).toEqual(2);
-    store.increase();
-    expect(miniPage.data.count).toEqual(3);
+    increase();
+    expect(miniPage.data.value).toEqual(counter.value);
+    increase();
+    expect(miniPage.data.value).toEqual(counter.value);
     // dispose
     miniPage.didUnmount();
+    increase();
+    expect(counter.value).toEqual(4);
+    expect(miniPage.data.value).toEqual(3);
   });
 
   it('should throw error', () => {
-    expect(() => observer({} as any, 0 as any)).toThrowError();
+    expect(() => observer({} as Context, 0 as any)).toThrowError();
   });
 });
 
-function selectTitle(todos: Todo[]) {
-  return todos.map(todo => todo.title).join('');
-}
-
-interface Todo {
-  title: string;
-  done: boolean;
+function createMiniAppComponent<T>(
+  options: tinyapp.PageOptions & tinyapp.ComponentOptions & T
+) {
+  return {
+    data: {},
+    setData(nextData: any) {
+      this.data = {
+        ...this.data,
+        ...nextData,
+      };
+    },
+    ...options,
+  };
 }

@@ -3,7 +3,7 @@
   <view class="user">
     <image class="avatar" src="{{user.avatar || '../../assets/logo.png'}}" background-size="cover"></image>
     <view class="nickname">{{user.nickName && user.nickName + '\'s' || 'My'}} Todo List
-      <text a:if="{{done}}" class="todo-done">
+      <text a:if="{{done.value}}" class="todo-done">
         👍
       </text></view>
   </view>

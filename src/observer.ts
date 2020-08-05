@@ -1,64 +1,61 @@
 import equal from 'fast-deep-equal';
-import { autorun, trace } from 'mobx';
+import { effect, stop } from '@vue/reactivity';
 
 export type Context =
   | tinyapp.IPageInstance<any>
   | tinyapp.IComponentInstance<any, any>;
 
-type Dictionary = Record<string, any>;
-export type MapState = () => Dictionary;
+export type MapState<S> = () => S;
 
-const MOBX_STATE_CACHE = '__$mobxState';
+const mobxStateCacheKey = '__$stateCache__';
 
 /**
  * 映射所需的数据到data
- * @param {Object} context
- * @param {Function} mapState
+ * @param context 组件或页面的 this 指针
+ * @param mapState 映射 state 到组件或页面
  * @returns {Function} disposer
  */
-function observer(context: Context, mapState: MapState) {
+function observer<S>(context: Context, mapState: MapState<S>) {
   assert(isFunction(mapState), 'mapState 应是 function');
 
-  const update = (nextState: Dictionary) => {
+  const update = () => {
+    const nextState = JSON.parse(JSON.stringify(mapState()));
+    assert(isObject(nextState), 'mapState() 应返回一个对象');
+
     // 缓存 mapState() 防止 diff 组件上固有的 data
-    const prevState = context[MOBX_STATE_CACHE] || {};
+    const prevState = context[mobxStateCacheKey] || {};
     // diff 以提升性能
     const patchState = diff(prevState, nextState);
     context.setData(patchState);
-    // delay 以避免阻塞 setData
-    context[MOBX_STATE_CACHE] = JSON.parse(JSON.stringify(patchState));
+    context[mobxStateCacheKey] = patchState;
   };
 
-  const callback = () => {
-    const nextState: Dictionary = mapState();
-    assert(Boolean(nextState), 'mapState 应该返回对象');
-
-    update(nextState);
-    trace();
-  };
-
-  const disposer = autorun(callback);
+  const effectFn = effect(update);
 
   const onUnload = context.onUnload;
   const didUnmount = context.didUnmount;
   context.onUnload = (...args: any[]) => {
-    disposer();
+    stop(effectFn);
     isFunction(onUnload) && onUnload.apply(context, args);
   };
 
   context.didUnmount = (...args: any[]) => {
-    disposer();
+    stop(effectFn);
     isFunction(didUnmount) && didUnmount.apply(context, args);
   };
-  return disposer;
+  return effectFn;
 }
 
 function isFunction(fn: any): boolean {
   return typeof fn === 'function';
 }
 
-function diff(ps: Dictionary, ns: Dictionary) {
-  const value: Dictionary = {};
+function isObject(val: any): boolean {
+  return typeof val === 'object' && val !== null;
+}
+
+function diff<S>(ps: S, ns: S) {
+  const value: Partial<S> = {};
   for (const k in ns) {
     if (k in ps) {
       if (!equal(ps[k], ns[k])) {
