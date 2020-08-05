@@ -4,15 +4,16 @@ import { isFunction } from './utils';
 let queue: Function[] = [];
 
 export function enqueueUpdate(callback: Function) {
-  queue.push(callback);
-  nextTick(doUpdate);
+  if (queue.push(callback) === 1) {
+    nextTick(doUpdate);
+  }
 }
 
 function doUpdate() {
   const list = queue;
   queue = [];
-  let update;
-  while ((update = list.pop())) {
-    isFunction(update) && update();
+  let job;
+  while ((job = list.pop())) {
+    isFunction(job) && job();
   }
 }
