@@ -13,7 +13,7 @@ function doUpdate() {
   const list = queue;
   queue = [];
   let job;
-  while ((job = list.pop())) {
+  while ((job = list.shift())) {
     isFunction(job) && job();
   }
 }
