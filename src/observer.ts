@@ -1,6 +1,6 @@
 import { effect, stop } from '@vue/reactivity';
 import { enqueueUpdate } from './enqueueUpdate';
-import { assert, isFunction } from './utils';
+import { assert, isFunction, isObject, diff } from './utils';
 
 export type Context =
   | tinyapp.IPageInstance<any>
@@ -8,7 +8,7 @@ export type Context =
 
 export type MapState<S> = () => S;
 
-// const mobxStateCacheKey = '__$stateCache__';
+const mobxStateCacheKey = '__$stateCache__';
 
 /**
  * 映射所需的数据到data
@@ -21,18 +21,17 @@ function observer<S>(context: Context, mapState: MapState<S>) {
 
   const update = () => {
     const nextState = JSON.parse(JSON.stringify(mapState()));
-    context.setData(nextState);
-    // assert(isObject(nextState), 'mapState() 应返回一个对象');
+    assert(isObject(nextState), 'mapState() 应返回一个对象');
 
-    // // 缓存 mapState() 防止 diff 组件上固有的 data
-    // const prevState = context[mobxStateCacheKey] || {};
-    // // diff 以提升性能
-    // const patchState = diff(prevState, nextState);
-    // const shouldUpdate = Object.keys(patchState).length;
-    // if (shouldUpdate) {
-    //   context.setData(patchState);
-    //   context[mobxStateCacheKey] = nextState;
-    // }
+    // 缓存 mapState() 防止 diff 组件上固有的 data
+    const prevState = context[mobxStateCacheKey] || {};
+    // diff 以提升性能
+    const patchState = diff(prevState, nextState);
+    const shouldUpdate = Object.keys(patchState).length;
+    if (shouldUpdate) {
+      context.setData(JSON.parse(JSON.stringify(patchState)));
+      context[mobxStateCacheKey] = nextState;
+    }
   };
 
   const job = effect(update, {
