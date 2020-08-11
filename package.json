@@ -1,6 +1,6 @@
 {
   "name": "mobx-mini",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "description": "Mobx 支付宝小程序的绑定",
   "repository": "https://github.com/luvsic3/mobx-mini",
   "license": "MIT",
