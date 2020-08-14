@@ -8,7 +8,7 @@ export type Context =
 
 export type MapState<S> = () => S;
 
-const mobxStateCacheKey = '__$stateCache__';
+const stateCacheKey = '__$stateCache__';
 
 /**
  * 映射所需的数据到data
@@ -24,13 +24,13 @@ function observer<S>(context: Context, mapState: MapState<S>) {
     assert(isObject(nextState), 'mapState() 应返回一个对象');
 
     // 缓存 mapState() 防止 diff 组件上固有的 data
-    const prevState = context[mobxStateCacheKey] || {};
+    const prevState = context[stateCacheKey] || {};
     // diff 以提升性能
     const patchState = diff(prevState, nextState);
     const shouldUpdate = Object.keys(patchState).length;
     if (shouldUpdate) {
-      context.setData(JSON.parse(JSON.stringify(patchState)));
-      context[mobxStateCacheKey] = nextState;
+      context.setData(patchState);
+      context[stateCacheKey] = nextState;
     }
   };
 

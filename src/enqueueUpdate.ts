@@ -10,10 +10,12 @@ export function enqueueUpdate(callback: Function) {
 }
 
 function doUpdate() {
+  // const start = Date.now();
   const list = queue;
   queue = [];
   let job;
   while ((job = list.shift())) {
     isFunction(job) && job();
   }
+  // console.log('doUpdate', Date.now() - start)
 }

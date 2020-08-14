@@ -1,19 +1,27 @@
-# mobx-mini
+# zenojs
 
-[![](https://img.shields.io/npm/v/mobx-mini.svg#align=left&display=inline&height=20&margin=%5Bobject%20Object%5D&originHeight=20&originWidth=80&status=done&style=none&width=80)](https://www.npmjs.com/package/mobx-mini) ![](https://github.com/luvsic3/mobx-mini/workflows/CI/badge.svg#align=left&display=inline&height=20&margin=%5Bobject%20Object%5D&originHeight=20&originWidth=90&status=done&style=none&width=90) ![](https://img.shields.io/badge/TypeScript-%E2%9C%93-007ACC.svg#align=left&display=inline&height=20&margin=%5Bobject%20Object%5D&originHeight=20&originWidth=88&status=done&style=none&width=88) [![](https://img.shields.io/github/license/luv-sic/mobx-mini.svg#align=left&display=inline&height=20&margin=%5Bobject%20Object%5D&originHeight=20&originWidth=78&status=done&style=none&width=78)](https://github.com/luvsic3/mobx-mini/blob/master/LICENSE)<br />
-<br />Mobx 支付宝小程序的绑定
+[![](https://img.shields.io/npm/v/zenojs.svg#align=left&display=inline&height=20&margin=%5Bobject%20Object%5D&originHeight=20&originWidth=80&status=done&style=none&width=80)](https://www.npmjs.com/package/zenojs) 
+![](https://github.com/luvsic3/zenojs/workflows/CI/badge.svg#align=left&display=inline&height=20&margin=%5Bobject%20Object%5D&originHeight=20&originWidth=90&status=done&style=none&width=90) 
+![](https://img.shields.io/badge/TypeScript-%E2%9C%93-007ACC.svg#align=left&display=inline&height=20&margin=%5Bobject%20Object%5D&originHeight=20&originWidth=88&status=done&style=none&width=88) 
+[![](https://img.shields.io/github/license/luvsic3/zenojs.svg#align=left&display=inline&height=20&margin=%5Bobject%20Object%5D&originHeight=20&originWidth=78&status=done&style=none&width=78)](https://github.com/luvsic3/zenojs/blob/master/LICENSE)
+
+> zeno，发音 /ˈzeɪnoʊ/ 。杰诺是漫画全职猎人中揍敌客家的前任当家，变化系能力者。绝招是 *龙头戏画* 和 *牙突* 。
+
+小程序状态管理框架
+
 <a name="Feature"></a>
 ## Feature
 
-1. 基于 Mobx，简单，灵活，性能强大
-1. Typescript 友好
+1. 基于 `@vue/reactivity`，简单，灵活，性能优异
+2. Typescript 友好
+
 <a name="API"></a>
 ## API
 <a name="25cbf599"></a>
 #### `observer(context, mapState)`
 首先，定义 `/store/todo.js`
 ```javascript
-import { reactive, computed } from 'mobx-mini';
+import { reactive, computed } from 'zenojs';
 let idx = 3;
 
 const items = new Array(idx).fill(1).map((item, index) => {
@@ -49,7 +57,7 @@ export { todos, done, toggleCompleted, addTodo };
 映射状态到页面或组件 `/pages/todos/todos.js`
 ```javascript
 import { todos, done, toggleCompleted } from '../../store/todo';
-import { observer } from 'mobx-mini';
+import { observer } from 'zenojs';
 
 const mapState = () => ({
   todos,
