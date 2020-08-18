@@ -1,6 +1,6 @@
 {
   "name": "zenojs",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "小程序状态管理框架",
   "repository": "https://github.com/luvsic3/zenojs",
   "license": "MIT",
