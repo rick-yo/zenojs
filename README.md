@@ -7,18 +7,15 @@
 
 > zeno，发音 /ˈzeɪnoʊ/ 。杰诺是漫画全职猎人中揍敌客家的前任当家，变化系能力者。绝招是 *龙头戏画* 和 *牙突* 。
 
-小程序状态管理框架
+轻量灵活的小程序状态管理框架
 
-<a name="Feature"></a>
 ## Feature
-
 1. 基于 `@vue/reactivity`，简单，灵活，性能优异
 2. Typescript 友好
 
-<a name="API"></a>
-## API
-<a name="25cbf599"></a>
-#### `observer(context, mapState)`
+## 使用
+### 全局 store
+全局 store 和小程序应用的生命周期保持一致，可在多个页面、组件之间共享。
 首先，定义 `/store/todo.js`
 ```javascript
 import { reactive, computed } from 'zenojs';
@@ -54,7 +51,9 @@ function addTodo(text) {
 
 export { todos, done, toggleCompleted, addTodo };
 ```
+
 映射状态到页面或组件 `/pages/todos/todos.js`
+
 ```javascript
 import { todos, done, toggleCompleted } from '../../store/todo';
 import { observer } from 'zenojs';
@@ -73,6 +72,7 @@ Page({
   },
 });
 ```
+
 在 axml 中访问状态和计算属性
 ```xml
 <view a:for="{{todos}}">
@@ -81,10 +81,48 @@ Page({
 <view>All todo item has done ? {{done.value}}</view>
 ```
 
+###  页面 store
+页面 store 和页面实例的生命周期保持一致，多个页面实例之间的状态是隔离的，无法相互访问。
 
-<a name="34062b25"></a>
+```JavaScript
+import { provide, inject } from 'zenojs';
+
+// store 初始化
+const storeName = 'counter';
+
+function setup() {
+  const state = reactive({
+    count: 0,
+  });
+  function increment() {
+    state.count++;
+  }
+  return {
+    state,
+    increment,
+  };
+}
+
+// 页面实例注册 store，同步 store 状态到 this.data
+Page({
+  onLoad() {
+    provide(this, storeName, setup);
+    // 访问 store 方法
+    this.$store.increment();
+  },
+});
+
+// 页面子组件消费 store，同步 store 状态到 this.data
+Component({
+  onInit() {
+    inject(this, storeName);
+    // 访问 store 方法
+    this.$store.increment();
+  },
+});
+```
+
 ## 最佳实践
-<a name="je3w3"></a>
 ### 状态管理和视图层解耦
 store 应有独立的目录结构，不要和 page 或 component 放在一起
 ```
@@ -116,14 +154,12 @@ example
 └── store
     └── todo.js
 ```
-<a name="tVRlz"></a>
 ### 状态的更新应统一管理
 不要在除 store 外的地方更新状态，见 `/example` 
-<a name="a7TdY"></a>
-## 注意
 
+## 注意
 - 访问计算属性的要通过 `computedRef.value` 
 - 处于性能考量，状态同步到视图层是异步的，你可能需要通过 `nextTick`  来获取更新后的 `this.data` 
-<a name="Example"></a>
+
 ## Example
 见 `/example` 目录
