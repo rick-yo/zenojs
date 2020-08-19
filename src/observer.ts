@@ -1,14 +1,7 @@
 import { effect, stop } from '@vue/reactivity';
 import { enqueueUpdate } from './enqueueUpdate';
-import { assert, isFunction, isObject, diff } from './utils';
-
-export type Context =
-  | tinyapp.IPageInstance<any>
-  | tinyapp.IComponentInstance<any, any>;
-
-export type MapState<S> = () => S;
-
-const stateCacheKey = '__$stateCache__';
+import { assert, isFunction, onMount, mapStateToData } from './utils';
+import { Context, MapState } from './type';
 
 /**
  * 映射所需的数据到data
@@ -20,41 +13,22 @@ function observer<S>(context: Context, mapState: MapState<S>) {
   assert(isFunction(mapState), 'mapState 应是 function');
 
   const update = () => {
-    const nextState = JSON.parse(JSON.stringify(mapState()));
-    assert(isObject(nextState), 'mapState() 应返回一个对象');
-
-    // 缓存 mapState() 防止 diff 组件上固有的 data
-    const prevState = context[stateCacheKey] || {};
-    // diff 以提升性能
-    const patchState = diff(prevState, nextState);
-    const shouldUpdate = Object.keys(patchState).length;
-    if (shouldUpdate) {
-      context.setData(patchState);
-      context[stateCacheKey] = nextState;
-    }
+    mapStateToData(context, mapState);
   };
 
-  const job = effect(update, {
-    scheduler(job) {
-      enqueueUpdate(job);
-    },
-    // onTrigger(e) {
-    //   console.log('onTrigger :>> ', e);
-    // },
+  onMount(context, () => {
+    const job = effect(update, {
+      scheduler(job) {
+        enqueueUpdate(job);
+      },
+      // onTrigger(e) {
+      //   console.log('onTrigger :>> ', e);
+      // },
+    });
+    return () => {
+      stop(job);
+    };
   });
-
-  const onUnload = context.onUnload;
-  const didUnmount = context.didUnmount;
-  context.onUnload = (...args: any[]) => {
-    stop(job);
-    isFunction(onUnload) && onUnload.apply(context, args);
-  };
-
-  context.didUnmount = (...args: any[]) => {
-    stop(job);
-    isFunction(didUnmount) && didUnmount.apply(context, args);
-  };
-  return job;
 }
 
 export default observer;
