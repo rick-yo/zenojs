@@ -12,12 +12,8 @@ import { Context, MapState } from './type';
 function observer<S>(context: Context, mapState: MapState<S>) {
   assert(isFunction(mapState), 'mapState 应是 function');
 
-  const update = () => {
-    mapStateToData(context, mapState);
-  };
-
   onMount(context, () => {
-    const job = effect(update, {
+    const job = effect(() => mapStateToData(context, mapState), {
       scheduler(job) {
         enqueueUpdate(job);
       },

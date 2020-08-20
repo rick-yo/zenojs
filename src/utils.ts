@@ -1,5 +1,6 @@
 import equal from 'fast-deep-equal';
 import { Context, MapState } from './type';
+import cloneDeep from 'lodash/cloneDeep';
 
 function isFunction(fn: any): fn is Function {
   return typeof fn === 'function';
@@ -49,7 +50,7 @@ function mapStateToData<T>(
   mapState: MapState<T>,
   cacheKey = stateCacheKey
 ) {
-  const nextState = JSON.parse(JSON.stringify(mapState()));
+  const nextState = cloneDeep(mapState());
   assert(isObject(nextState), 'mapState() 应返回一个对象');
 
   // 缓存 mapState() 防止 diff 组件上固有的 data
