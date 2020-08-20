@@ -1,6 +1,7 @@
 import equal from 'fast-deep-equal';
 import { Context, MapState } from './type';
 import cloneDeep from 'lodash/cloneDeep';
+import { toRaw, isReactive } from '@vue/reactivity';
 
 function isFunction(fn: any): fn is Function {
   return typeof fn === 'function';
@@ -50,7 +51,7 @@ function mapStateToData<T>(
   mapState: MapState<T>,
   cacheKey = stateCacheKey
 ) {
-  const nextState = cloneDeep(mapState());
+  const nextState = cloneDeep(toRaws(mapState()));
   assert(isObject(nextState), 'mapState() 应返回一个对象');
 
   // 缓存 mapState() 防止 diff 组件上固有的 data
@@ -65,3 +66,12 @@ function mapStateToData<T>(
 }
 
 export { isFunction, isObject, diff, assert, onMount, mapStateToData };
+
+function toRaws(state: any) {
+  const rawState: any = {};
+  Object.keys(state).forEach(
+    (key: any) =>
+      (rawState[key] = isReactive(state[key]) ? toRaw(state[key]) : state[key])
+  );
+  return rawState;
+}
