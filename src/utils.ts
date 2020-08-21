@@ -1,7 +1,7 @@
 import equal from 'fast-deep-equal';
 import { Context, MapState } from './type';
 import cloneDeep from 'lodash/cloneDeep';
-import { toRaw, isReactive } from '@vue/reactivity';
+import { ReactiveFlags } from '@vue/reactivity';
 
 function isFunction(fn: any): fn is Function {
   return typeof fn === 'function';
@@ -51,27 +51,31 @@ function mapStateToData<T>(
   mapState: MapState<T>,
   cacheKey = stateCacheKey
 ) {
-  const nextState = cloneDeep(toRaws(mapState()));
-  assert(isObject(nextState), 'mapState() 应返回一个对象');
+  const nextState = cloneDeep(mapState());
+  const rawNextState = deleteReactiveFlag(nextState);
+  assert(isObject(rawNextState), 'mapState() 应返回一个对象');
 
   // 缓存 mapState() 防止 diff 组件上固有的 data
   const prevState = context[cacheKey] || {};
   // diff 以提升性能
-  const patchState = diff(prevState, nextState);
+  const patchState = diff(prevState, rawNextState);
   const shouldUpdate = Object.keys(patchState).length;
   if (shouldUpdate) {
     context.setData(patchState);
-    context[cacheKey] = nextState;
+    context[cacheKey] = rawNextState;
   }
 }
 
 export { isFunction, isObject, diff, assert, onMount, mapStateToData };
 
-function toRaws(state: any) {
-  const rawState: any = {};
-  Object.keys(state).forEach(
-    (key: any) =>
-      (rawState[key] = isReactive(state[key]) ? toRaw(state[key]) : state[key])
-  );
-  return rawState;
+function deleteReactiveFlag<T>(raw: T): T {
+  if (!isObject(raw)) return raw;
+  // @ts-ignore
+  delete raw[ReactiveFlags.REACTIVE];
+  for (const key in raw) {
+    if (Object.prototype.hasOwnProperty.call(raw, key)) {
+      raw[key] = deleteReactiveFlag(raw[key]);
+    }
+  }
+  return raw;
 }
