@@ -5,7 +5,7 @@ import { todos, completedTodos, toggleCompleted } from '../../store/todo';
 
 const mapState = () => ({
   todos,
-  completedTodos
+  completedTodos: completedTodos.value,
 })
 
 Page({

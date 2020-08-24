@@ -19,10 +19,10 @@ const done = computed(() => todos.every(todo => todo.completed));
 const completedTodos = computed(() => {
   const doneItems = todos.filter(todo => todo.completed);
   // my.setStorage 会导致 ios 10.3.2 12.4.4 appx2.0 上 doneItems 是 空对象 或 null
-  // my.setStorage({
-  //   key: 'doneItems',
-  //   data: doneItems,
-  // })
+  my.setStorage({
+    key: 'doneItems',
+    data: doneItems,
+  })
   console.log('doneItems :>> ', doneItems);
   return doneItems;
 });

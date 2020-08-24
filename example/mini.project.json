@@ -5,6 +5,9 @@
   "uniBuild": true,
   "enableNodeModuleBabelTransform": true,
   "axmlStrictCheck": false,
+  "node_modules_es6_whitelist": [
+    "@vue/reactivity"
+  ],
   "exclude": [
     "miniapptools_dist/**/*"
   ]
