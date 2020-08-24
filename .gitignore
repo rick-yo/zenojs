@@ -5,3 +5,4 @@ dist
 .tea
 coverage
 yarn.lock
+miniapptools_dist

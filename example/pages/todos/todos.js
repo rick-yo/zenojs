@@ -1,11 +1,11 @@
 // 获取全局 app 实例
 const app = getApp();
 import { observer } from '../../../dist';
-import { todos, done, toggleCompleted } from '../../store/todo';
+import { todos, completedTodos, toggleCompleted } from '../../store/todo';
 
 const mapState = () => ({
   todos,
-  done
+  completedTodos
 })
 
 Page({

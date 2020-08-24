@@ -1,0 +1,3 @@
+<text a:if="{{done}}" class="todo-done">
+  👍
+</text>

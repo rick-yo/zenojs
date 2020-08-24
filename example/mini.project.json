@@ -1,0 +1,11 @@
+{
+  "component2": true,
+  "enableParallelLoader": true,
+  "enableAppxNg": true,
+  "uniBuild": true,
+  "enableNodeModuleBabelTransform": true,
+  "axmlStrictCheck": false,
+  "exclude": [
+    "miniapptools_dist/**/*"
+  ]
+}

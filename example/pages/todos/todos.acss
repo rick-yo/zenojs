@@ -113,10 +113,6 @@
   opacity: 1;
 }
 
-.todo-done {
-  margin-left: 10rpx;
-}
-
 .todo-footer {
   flex-shrink: 0;
   padding: 50rpx 0 100rpx;
