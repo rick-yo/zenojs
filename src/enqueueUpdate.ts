@@ -1,4 +1,4 @@
-import nextTick from './nextTick';
+import { nextTick } from './nextTick';
 import { isFunction } from './utils';
 
 let queue: Function[] = [];

@@ -27,4 +27,4 @@ function observer<S>(context: Context, mapState: MapState<S>) {
   });
 }
 
-export default observer;
+export { observer };

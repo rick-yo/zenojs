@@ -8,4 +8,4 @@ if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production') {
   };
 }
 
-export default nextTick;
+export { nextTick };
