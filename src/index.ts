@@ -29,7 +29,20 @@ export {
   Context,
 };
 
+const isMiniapp = typeof getApp === 'function';
+
+const GLOBAL = (() => {
+  if (isMiniapp) {
+    return getApp || getCurrentPages || App || Page || Component;
+  }
+  return window;
+})();
+
 function provideModule<T>(key: string, val: T): T {
+  if (isMiniapp) {
+    //@ts-ignore
+    return GLOBAL[key] || (GLOBAL[key] = val);
+  }
   //@ts-ignore
-  return getApp[key] || (getApp[key] = val);
+  return window[key] || (window[key] = val);
 }

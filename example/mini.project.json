@@ -1,8 +1,6 @@
 {
   "component2": true,
   "enableParallelLoader": true,
-  "enableAppxNg": true,
-  "uniBuild": true,
   "enableNodeModuleBabelTransform": true,
   "axmlStrictCheck": false,
   "node_modules_es6_whitelist": [
