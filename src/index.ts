@@ -29,11 +29,11 @@ export {
   Context,
 };
 
-const isMiniapp = typeof getApp === 'function';
+const isMiniapp = typeof my === 'object';
 
 const GLOBAL = (() => {
   if (isMiniapp) {
-    return getApp || getCurrentPages || App || Page || Component;
+    return my;
   }
   return window;
 })();
