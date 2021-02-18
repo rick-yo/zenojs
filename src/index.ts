@@ -8,6 +8,15 @@ import {
 import { provide as _provide, inject as _inject } from './provide';
 import { Context, MapState } from './type';
 
+const isMiniapp = typeof my === 'object';
+
+const GLOBAL = (() => {
+  if (isMiniapp) {
+    return my;
+  }
+  return window;
+})();
+
 // HACK 缓存模块，防止小程序分包加载时，全局状态管理失效
 const observer = provideModule('__observer', _observer);
 const reactive = provideModule('__reactive', _reactive);
@@ -16,6 +25,15 @@ const effect = provideModule('__effect', _effect);
 const nextTick = provideModule('__nextTick', _nextTick);
 const provide = provideModule('__provide', _provide);
 const inject = provideModule('__inject', _inject);
+
+function provideModule<T>(key: string, val: T): T {
+  if (isMiniapp) {
+    //@ts-ignore
+    return GLOBAL[key] || (GLOBAL[key] = val);
+  }
+  //@ts-ignore
+  return window[key] || (window[key] = val);
+}
 
 export {
   observer,
@@ -28,21 +46,3 @@ export {
   MapState,
   Context,
 };
-
-const isMiniapp = typeof my === 'object';
-
-const GLOBAL = (() => {
-  if (isMiniapp) {
-    return my;
-  }
-  return window;
-})();
-
-function provideModule<T>(key: string, val: T): T {
-  if (isMiniapp) {
-    //@ts-ignore
-    return GLOBAL[key] || (GLOBAL[key] = val);
-  }
-  //@ts-ignore
-  return window[key] || (window[key] = val);
-}
